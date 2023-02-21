@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AspNetCoreIdentityApp.Web.Models
+namespace AspNetCoreIdentityApp.Web.ViewModels
 {
-    public class ResetPasswordViewModel
+    public class ForgotPasswordViewModel
     {
         [EmailAddress(ErrorMessage = "Email is not in the correct format.")]
         [Required(ErrorMessage = "Email field must be filled.")]

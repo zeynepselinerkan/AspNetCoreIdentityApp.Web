@@ -25,11 +25,13 @@ namespace AspNetCoreIdentityApp.Web.ViewModels
         [Display(Name = "Phone Number :")]
         public string PhoneNumber { get; set; }
 
-       
+        [DataType(DataType.Password)]
+
         [Required(ErrorMessage = "Password field must be filled.")]
         [Display(Name = "Password :")]
         public string Password { get; set; }
 
+        [DataType(DataType.Password)]
         [Compare(nameof(Password), ErrorMessage = "Passwords are not identical.")]
         [Required(ErrorMessage = "Password Confirmation field must be filled.")]
         [Display(Name = "Password Confirmation :")]

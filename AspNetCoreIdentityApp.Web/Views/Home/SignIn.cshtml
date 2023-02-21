@@ -16,6 +16,7 @@
        @* Controller ve Action değişmeyecekse aşağıdaki gibi yazabilirsin. Değişirse değişenleri ekle! Bestpractice'de bu senaryoda silmek daha iyi.'
         <form method="post"></form>*@
 
+       
         <form asp-controller="Home" asp-action="SignIn" asp-route-returnurl="@Context.Request.Query["returnUrl"]" method="post">
             <div class="mb-3">
                 <label for="EmailAddress" class="form-label" asp-for="EmailAddress"></label>
@@ -35,7 +36,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <a class="btn btn-outline-secondary btn-sm float-end" asp-controller="Home" asp-action="ResetPassword">Forgot Password</a>
+                    <a class="btn btn-outline-secondary btn-sm float-end" asp-controller="Home" asp-action="ForgotPassword">Forgot Password</a>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Sign In</button>

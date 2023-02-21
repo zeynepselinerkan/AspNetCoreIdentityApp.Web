@@ -16,6 +16,7 @@ namespace AspNetCoreIdentityApp.Web.ViewModels
         [Display(Name = "Email :")]
         public string EmailAddress { get; set; }
 
+        [DataType(DataType.Password)]
         [Required(ErrorMessage = "Password field must be filled.")]
         [Display(Name = "Password :")]
         public string Password { get; set; }

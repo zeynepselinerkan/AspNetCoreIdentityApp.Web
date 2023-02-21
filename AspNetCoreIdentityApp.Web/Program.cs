@@ -1,7 +1,9 @@
 using AspNetCoreIdentityApp.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using AspNetCoreIdentityApp.Web.Extensions;
-
+using Microsoft.AspNetCore.Identity;
+using AspNetCoreIdentityApp.Web.OptionsModels;
+using AspNetCoreIdentityApp.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddIdentityWithExtension();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings")); // app.dev jsondaki
+builder.Services.AddScoped<IEmailService, EmailService>(); 
 
 builder.Services.ConfigureApplicationCookie(opt =>
 {
