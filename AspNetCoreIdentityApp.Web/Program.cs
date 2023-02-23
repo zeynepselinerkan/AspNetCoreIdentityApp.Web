@@ -14,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityAppConnectionString"));
 });
 
+builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval= TimeSpan.FromMinutes(30)); // default 30 dk, otomatik logout için - hassas bilgiler deðiþtiðinde deðiþir. Concurrency stamp ise identity ile ilgili deðil - eþzamanlýlýk için(benden önce deðiþiklik olduysa uyarý gönderme)-her güncellemede deðiþir. Ayný anda olursa bir tanesini kabul eder. Identity otomatik concurrency stamp kontrol ediyor.
+
 builder.Services.AddIdentityWithExtension();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings")); // app.dev jsondaki
 builder.Services.AddScoped<IEmailService, EmailService>(); 

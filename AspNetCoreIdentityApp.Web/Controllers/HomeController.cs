@@ -41,7 +41,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         {
             //HttpContext.Request // uygulamanın kalbi, tüm request ve responselara ulaşırım.
 
-            returnUrl = returnUrl ?? Url.Action("Index", "Home");
+            returnUrl ??= Url.Action("Index", "Home");
             var hasUser = await _userManager.FindByEmailAsync(request.EmailAddress);
             if (hasUser == null)
             {
@@ -52,7 +52,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             if (signInResult.Succeeded)
             {
-                return Redirect(returnUrl);
+                return Redirect(returnUrl!);
             }
             if (signInResult.IsLockedOut)
             {
@@ -118,7 +118,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             // link --> https://localhost:7206?userId=12213&token=Dsadsaf token güvenlik için, ömür de vericem (sadece 2 saat örneğin).
 
             // Email Service --> Email göndericem.
-            await _emailService.SendResetPasswordEmail(passwordResetLink, hasUser.Email);
+            await _emailService.SendResetPasswordEmail(passwordResetLink!, hasUser.Email!);
 
             TempData["SuccessMessage"] = "Reset password link was sent to your email address";
 
@@ -134,22 +134,22 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel request)
         {
-            string userId = TempData["userId"].ToString();
-            string token = TempData["token"].ToString();
+            var userId = TempData["userId"];
+            var token = TempData["token"];
 
             if (userId==null || token==null)
             {
                 throw new Exception("An error occured.");
             }
 
-            var hasUser = await _userManager.FindByIdAsync(userId);
+            var hasUser = await _userManager.FindByIdAsync(userId.ToString()!);
 
             if (hasUser == null)
             {
                 ModelState.AddModelError(String.Empty, "User can not be found.");
                 return View();
             }
-            var result = await _userManager.ResetPasswordAsync(hasUser, token, request.Password);
+            var result = await _userManager.ResetPasswordAsync(hasUser, token.ToString()!, request.Password);
 
             if (result.Succeeded)
             {
