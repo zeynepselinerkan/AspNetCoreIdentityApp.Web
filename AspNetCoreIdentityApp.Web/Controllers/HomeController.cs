@@ -40,6 +40,10 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         public async Task<IActionResult> SignIn(SignInViewModel request, string? returnUrl = null) // Kullanıcı, sadece üyelerin girebileceği bir sayfaya giderse signIn'den sonra oraya yönlendiricem. Girmek istediği sayfa returnUrl'de tutucam. returnUrl yoksa anasayfaya yönlendiricem. Erişmek istediği sayfayı kaybetmemiş olacağım.
         {
             //HttpContext.Request // uygulamanın kalbi, tüm request ve responselara ulaşırım.
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
 
             returnUrl ??= Url.Action("Index", "Home");
             var hasUser = await _userManager.FindByEmailAsync(request.EmailAddress);

@@ -1,4 +1,5 @@
-﻿using AspNetCoreIdentityApp.Web.Models;
+﻿using AspNetCoreIdentityApp.Web.Extensions;
+using AspNetCoreIdentityApp.Web.Models;
 using AspNetCoreIdentityApp.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -41,6 +42,45 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         {
             await _signInManager.SignOutAsync();
            
+        }
+
+        public async Task<IActionResult> ChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel request)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var currentUser =await _userManager.FindByNameAsync(User.Identity!.Name!);
+            
+            var checkOldPassword = await _userManager.CheckPasswordAsync(currentUser,request.OldPassword);
+
+            if (!checkOldPassword)
+            {
+                ModelState.AddModelError(string.Empty, "Your old password is wrong.");
+                return View();
+            }
+
+            var resultChangePassword = await _userManager.ChangePasswordAsync(currentUser,request.OldPassword,request.NewPassword);
+
+            if (!resultChangePassword.Succeeded)
+            {
+                ModelState.AddModelErrorList(resultChangePassword.Errors.Select(x=>x.Description).ToList());
+                return View();
+            }
+
+            await _userManager.UpdateSecurityStampAsync(currentUser);
+            await _signInManager.SignOutAsync();
+            await _signInManager.PasswordSignInAsync(currentUser,request.NewPassword,true,false);
+
+            TempData["SuccessMessage"] = "Your password was changed successfully.";
+
+            return View();
         }
     }
 }

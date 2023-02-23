@@ -26,15 +26,16 @@ namespace AspNetCoreIdentityApp.Web.ViewModels
         public string PhoneNumber { get; set; }
 
         [DataType(DataType.Password)]
-
         [Required(ErrorMessage = "Password field must be filled.")]
         [Display(Name = "Password :")]
+        [MinLength(6, ErrorMessage = "Password must be min 6 characters.")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Compare(nameof(Password), ErrorMessage = "Passwords are not identical.")]
         [Required(ErrorMessage = "Password Confirmation field must be filled.")]
         [Display(Name = "Password Confirmation :")]
+        [MinLength(6, ErrorMessage = "Password must be min 6 characters.")]
         public string PasswordConfirmation { get; set; }
 
     }
