@@ -14,29 +14,29 @@ namespace AspNetCoreIdentityApp.Web.ViewModels
         }
         [Required(ErrorMessage ="Username field must be filled.")]
         [Display(Name = "Username :")]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = null!;
 
         [EmailAddress(ErrorMessage ="Email is not in the correct format.")]
         [Required(ErrorMessage = "Email field must be filled.")]
         [Display(Name = "Email :")]
-        public string EmailAddress { get; set; }
+        public string EmailAddress { get; set; } = null!;
 
         [Required(ErrorMessage = "Phone number field must be filled.")]
         [Display(Name = "Phone Number :")]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = null!;
 
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Password field must be filled.")]
         [Display(Name = "Password :")]
         [MinLength(6, ErrorMessage = "Password must be min 6 characters.")]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
         [DataType(DataType.Password)]
         [Compare(nameof(Password), ErrorMessage = "Passwords are not identical.")]
         [Required(ErrorMessage = "Password Confirmation field must be filled.")]
         [Display(Name = "Password Confirmation :")]
         [MinLength(6, ErrorMessage = "Password must be min 6 characters.")]
-        public string PasswordConfirmation { get; set; }
+        public string PasswordConfirmation { get; set; } = null!;
 
     }
 }

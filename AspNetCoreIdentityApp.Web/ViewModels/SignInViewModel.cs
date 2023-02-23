@@ -14,12 +14,12 @@ namespace AspNetCoreIdentityApp.Web.ViewModels
         [EmailAddress(ErrorMessage = "Email is not in the correct format.")]
         [Required(ErrorMessage = "Email field must be filled.")]
         [Display(Name = "Email :")]
-        public string EmailAddress { get; set; }
+        public string EmailAddress { get; set; } = null!;
 
         [DataType(DataType.Password)]
         [Required(ErrorMessage = "Password field must be filled.")]
         [Display(Name = "Password :")]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
         [Display(Name ="Remember Me ?")]
         public bool RememberMe { get; set; }

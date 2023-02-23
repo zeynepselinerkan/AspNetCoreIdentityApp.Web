@@ -4,6 +4,7 @@ using AspNetCoreIdentityApp.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AspNetCoreIdentityApp.Web.Controllers
 {
@@ -44,7 +45,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
            
         }
 
-        public async Task<IActionResult> ChangePassword()
+        public IActionResult ChangePassword()
         {
             return View();
         }
@@ -56,7 +57,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 return View();
             }
 
-            var currentUser =await _userManager.FindByNameAsync(User.Identity!.Name!);
+            var currentUser =(await _userManager.FindByNameAsync(User.Identity!.Name!))!;
             
             var checkOldPassword = await _userManager.CheckPasswordAsync(currentUser,request.OldPassword);
 
@@ -81,6 +82,25 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             TempData["SuccessMessage"] = "Your password was changed successfully.";
 
             return View();
+        }
+
+        public async Task<IActionResult> UserEdit()
+        {
+
+            ViewBag.gender = new SelectList(Enum.GetNames(typeof(Gender)));
+            var currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            var userEditViewModel = new EditUserViewModel()
+            {
+                UserName = currentUser.UserName,
+                EmailAddress = currentUser.Email,
+                PhoneNumber = currentUser.PhoneNumber,
+                Birthdate = currentUser.Birthdate,
+                City = currentUser.City,
+                Gender = currentUser.Gender,
+            };
+
+            return View(userEditViewModel);
         }
     }
 }
