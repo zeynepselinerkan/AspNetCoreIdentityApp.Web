@@ -99,5 +99,50 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
             TempData["SuccessMessage"] = "Role was deleted successfully.";
             return RedirectToAction(nameof(RoleController.Index));
         }
+        [HttpGet]
+        public async Task<IActionResult> AssignRole(string id)
+        {
+            var currentUser = (await _userManager.FindByIdAsync(id))!;
+
+            ViewBag.userId = id;
+
+            var roles = await _roleManager.Roles.ToListAsync();
+
+            var roleViewModelList = new List<AssignRoleViewModel>();
+
+            var userRoles = await _userManager.GetRolesAsync(currentUser);
+
+            foreach (var role in roles)
+            {
+                var assignRoleViewModel = new AssignRoleViewModel() { Id = role.Id, Name = role.Name!};
+
+                if (userRoles.Contains(role.Name!))
+                {
+                    assignRoleViewModel.HasRole = true;
+                }
+                roleViewModelList.Add(assignRoleViewModel);
+            }
+
+            return View(roleViewModelList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AssignRole(string userId,List<AssignRoleViewModel> requestList)
+        {
+            var userToAssginRole = await _userManager.FindByIdAsync(userId);
+
+            foreach (var role in requestList)
+            {
+                if (role.HasRole)
+                {
+                   await _userManager.AddToRoleAsync(userToAssginRole, role.Name);
+                }
+                else
+                {
+                    await _userManager.RemoveFromRoleAsync(userToAssginRole, role.Name);
+                }
+            }
+            
+            return RedirectToAction("UserList","Home");
+        }
     }
 }

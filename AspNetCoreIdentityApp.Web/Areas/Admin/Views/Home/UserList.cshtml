@@ -3,9 +3,8 @@
     ViewData["Title"] = "UserList";
 }
 @model List<UserViewModel>
+
 <h1>Member List</h1>
-
-
 
 <table class="table table-striped">
     <thead>
@@ -13,6 +12,8 @@
             <th>Id</th>
             <th>User Name</th>
             <th>Email</th>
+            <th>Roles</th>
+            <th>Role Operations</th>
         </tr>
     </thead>
 
@@ -23,6 +24,12 @@
              <td>@item.Id</td>
              <td>@item.Name</td>
              <td>@item.EmailAddress</td>
+             <td>
+                <user-role-names user-id="@item.Id"></user-role-names>
+             </td>
+             <td>
+                  <a asp-controller="Role" asp-action="AssignRole" asp-route-id="@item.Id">Assign Role</a>
+                 </td>
          </tr>   
         }
     </tbody>
