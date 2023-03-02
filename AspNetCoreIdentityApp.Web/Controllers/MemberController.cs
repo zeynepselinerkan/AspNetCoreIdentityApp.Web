@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.FileProviders;
+using System.Security.Claims;
 
 namespace AspNetCoreIdentityApp.Web.Controllers
 {
@@ -16,6 +17,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileProvider _fileProvider;
+        private readonly IHttpContextAccessor _httpContextAccessor;// ctora eklerim dışarıdan claime erişmek için. program cs e ekle : builder.Services.AddHttpContextAccessor();
 
         public MemberController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IFileProvider fileProvider)
         {
@@ -26,6 +28,11 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            //var userClaims = HttpContext.User.Claims; Controllerda olmayan nesne ile ulaşmak istersem. Örneğin Businessta bir classtan erişmeye çalıştığında. Kritik datalar cookiede tutulmaz. Claimler kullanıcı hakkında tuttuğumuz ve yetkilendirmek için kullandığımız datalardır. Key-Value olarak tutulur.
+            // Claimleri okuma şekli :
+            var userClaims =User.Claims.ToList(); 
+            var email = User.Claims.FirstOrDefault(x=>x.Type==ClaimTypes.Email);
+
             var currentUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
 
             var userViewModel = new UserUserViewModel
@@ -174,6 +181,17 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             message = "You do not have authorization to see this page.";
             ViewBag.message = message;
             return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Claims(string returnUrl)
+        {
+            var userClaimList =User.Claims.Select(x => new ClaimViewModel()
+            {
+                Issuer=x.Issuer,
+                Type=x.Type,
+                Value=x.Value
+            }).ToList();
+            return View(userClaimList);
         }
     }
 }
