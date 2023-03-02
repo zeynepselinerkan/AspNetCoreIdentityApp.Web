@@ -1,4 +1,5 @@
-﻿@if (User.Identity!.IsAuthenticated)
+﻿
+@if (User.Identity!.IsAuthenticated)
 {
     <ul class="navbar-nav me-0">
         <li class="nav-item dropdown">
@@ -9,6 +10,10 @@
                 <li><a class="dropdown-item" asp-controller="Member" asp-action="Index">Profile</a></li>
                 <li><a class="dropdown-item" asp-controller="Member" asp-action="ChangePassword">Change Password</a></li>
                 <li><a class="dropdown-item" asp-controller="Member" asp-action="UserEdit">Update User Information</a></li>
+                @if(User.HasClaim(x=>x.Type==ClaimTypes.Role && x.Value=="Admin"))
+                {
+                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">Admin Page</a></li>
+                }
                 <li><a class="dropdown-item" asp-route-returnurl="/Home/Index" asp-controller="Member" asp-action="LogOut">Sign Out</a></li>
             </ul>
         </li>

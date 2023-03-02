@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreIdentityApp.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin,Role-Action")]
     [Area("Admin")]
     public class RoleController : Controller
     {
@@ -18,7 +20,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
+        
         public async Task<IActionResult> Index()
         {
           var roles = await _roleManager.Roles.Select(x => new RoleViewModel()
@@ -29,12 +31,13 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
 
             return View(roles);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult AddRole()
         {
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddRole(AddRoleViewModel request)
         {
@@ -47,7 +50,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
             TempData["SuccessMessage"] = "Role was created successfully.";
             return RedirectToAction(nameof(RoleController.Index));
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> UpdateRole(string id)
         {
@@ -60,6 +63,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
 
             return View(new UpdateRoleViewModel() { Id=roleToUpdate.Id, Name=roleToUpdate!.Name!});
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> UpdateRole(UpdateRoleViewModel request)
         {
@@ -79,6 +83,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
 
             return View();
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRole(string id)
         {
             var roleToDelete = await _roleManager.FindByIdAsync(id);
@@ -99,6 +104,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
             TempData["SuccessMessage"] = "Role was deleted successfully.";
             return RedirectToAction(nameof(RoleController.Index));
         }
+      
         [HttpGet]
         public async Task<IActionResult> AssignRole(string id)
         {
@@ -125,6 +131,7 @@ namespace AspNetCoreIdentityApp.Web.Areas.Admin.Controllers
 
             return View(roleViewModelList);
         }
+       
         [HttpPost]
         public async Task<IActionResult> AssignRole(string userId,List<AssignRoleViewModel> requestList)
         {

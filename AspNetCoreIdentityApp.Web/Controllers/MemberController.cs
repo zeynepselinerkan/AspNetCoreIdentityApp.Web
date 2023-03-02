@@ -167,5 +167,13 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             return View(userEditViewModel);
         }
+
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            string message = string.Empty;
+            message = "You do not have authorization to see this page.";
+            ViewBag.message = message;
+            return View();
+        }
     }
 }

@@ -29,6 +29,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
     cookieBuilder.Name = "UdemyAppCookie";
     opt.LoginPath = new PathString("/Home/SignIn");
     opt.LogoutPath = new PathString("/Member/Logout");
+    opt.AccessDeniedPath = new PathString("/Member/AccessDenied");
     opt.Cookie = cookieBuilder;
     opt.ExpireTimeSpan = TimeSpan.FromDays(60);
     opt.SlidingExpiration = true; // Her giriþte 60 gün uzamasýný saðlayacak. False olursa 61.gün tekrar login sayfasýna yönlendirir.
