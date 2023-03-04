@@ -157,7 +157,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             // Burada password gelmez password hash olarak gelir. currentUser...
 
             await _userManager.UpdateSecurityStampAsync(currentUser);
-            await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync(); // Cookie yeniden oluşsun diye logout yaptırıyoruz.
             await _signInManager.SignInAsync(currentUser, true);
 
             TempData["SuccessMessage"] = "Your information was changed successfully.";
@@ -183,8 +183,10 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> Claims(string returnUrl)
+        public IActionResult Claims(string returnUrl)
         {
+            //User.Identity.Name == User.Claims.First(x => x.Type == ClaimTypes.Name);
+          
             var userClaimList =User.Claims.Select(x => new ClaimViewModel()
             {
                 Issuer=x.Issuer,
@@ -192,6 +194,12 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 Value=x.Value
             }).ToList();
             return View(userClaimList);
+        }
+
+        [Authorize(Policy ="KocaeliPolicy")]
+        public IActionResult KocaeliPage()
+        {
+            return View();
         }
     }
 }

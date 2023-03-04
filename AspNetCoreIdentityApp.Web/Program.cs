@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityApp.Web.OptionsModels;
 using AspNetCoreIdentityApp.Web.Services;
 using Microsoft.Extensions.FileProviders;
+using AspNetCoreIdentityApp.Web.ClaimProvider;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,15 +17,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityAppConnectionString"));
 });
 
-builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval= TimeSpan.FromMinutes(30)); // default 30 dk, otomatik logout için - hassas bilgiler deðiþtiðinde deðiþir. Concurrency stamp ise identity ile ilgili deðil - eþzamanlýlýk için(benden önce deðiþiklik olduysa uyarý gönderme)-her güncellemede deðiþir. Ayný anda olursa bir tanesini kabul eder. Identity otomatik concurrency stamp kontrol ediyor.
+builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(30)); // default 30 dk, otomatik logout için - hassas bilgiler deðiþtiðinde deðiþir. Concurrency stamp ise identity ile ilgili deðil - eþzamanlýlýk için(benden önce deðiþiklik olduysa uyarý gönderme)-her güncellemede deðiþir. Ayný anda olursa bir tanesini kabul eder. Identity otomatik concurrency stamp kontrol ediyor.
 
 builder.Services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory())); // userpictures için
 
 builder.Services.AddIdentityWithExtension();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings")); // app.dev jsondaki
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
 
+builder.Services.AddAuthorization(opt =>
+{
+    opt.AddPolicy("KocaeliPolicy", policy =>
+    {
+        policy.RequireClaim("City", "Kocaeli"); // Virgülle izin verieln þehirleri arttýrabilirim.
+        //policy.RequireRole("Admin"); --> Birden fazla kural eklenebilir.
+    });
 
+});
 
 builder.Services.ConfigureApplicationCookie(opt =>
 {
