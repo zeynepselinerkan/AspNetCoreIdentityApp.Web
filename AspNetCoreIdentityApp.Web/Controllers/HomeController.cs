@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using AspNetCoreIdentityApp.Web.Extensions;
 using AspNetCoreIdentityApp.Web.Services;
+using System.Security.Claims;
 
 namespace AspNetCoreIdentityApp.Web.Controllers
 {
@@ -92,14 +93,27 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             //    ViewBag.SuccessMessage = "Membership registration completed successfully.";
             //    return View();
             //}
-            if (identityResult.Succeeded)
-            {
-                TempData["SuccessMessage"] = "Membership registration completed successfully.";
-                return RedirectToAction(nameof(HomeController.SignUp));
-            }
-            ModelState.AddModelErrorList(identityResult.Errors.Select(x => x.Description).ToList());
 
-            return View();
+            if (!identityResult.Succeeded)
+            {
+                ModelState.AddModelErrorList(identityResult.Errors.Select(x => x.Description).ToList());
+                return View();
+            }
+
+            var excahngeExpireClaim = new Claim("ExchangeExpireDate", DateTime.Now.AddDays(10).ToString());
+            var user = await _userManager.FindByNameAsync(request.UserName);
+
+            var claimResult = await _userManager.AddClaimAsync(user!, excahngeExpireClaim);
+
+            if (!claimResult.Succeeded)
+            {
+                ModelState.AddModelErrorList(claimResult.Errors.Select(x => x.Description).ToList());
+                return View();
+            }
+
+            TempData["SuccessMessage"] = "Membership registration completed successfully.";
+            return RedirectToAction(nameof(HomeController.SignIn));
+
         }
         public IActionResult ForgotPassword()
         {
@@ -128,7 +142,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             return RedirectToAction(nameof(ForgotPassword)); // Viewbag yazarsam buradan tekrar anasayfaya giderse, sayfayı her yenilediğinde tekrar gönderir çünkü bu post method. O yüzden temp data ile beraber diğer requeste data taşımalıyım.
         }
-        public IActionResult ResetPassword(string userId,string token)
+        public IActionResult ResetPassword(string userId, string token)
         {
             TempData["userId"] = userId;
             TempData["token"] = token;
@@ -141,7 +155,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
             var userId = TempData["userId"];
             var token = TempData["token"];
 
-            if (userId==null || token==null)
+            if (userId == null || token == null)
             {
                 throw new Exception("An error occured.");
             }

@@ -197,7 +197,15 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         }
 
         [Authorize(Policy ="KocaeliPolicy")]
+        [HttpGet]
         public IActionResult KocaeliPage()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "ExchangePolicy")]
+        [HttpGet]
+        public IActionResult ExchangePage()
         {
             return View();
         }

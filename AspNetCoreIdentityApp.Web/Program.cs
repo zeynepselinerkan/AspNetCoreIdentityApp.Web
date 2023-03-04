@@ -7,6 +7,8 @@ using AspNetCoreIdentityApp.Web.Services;
 using Microsoft.Extensions.FileProviders;
 using AspNetCoreIdentityApp.Web.ClaimProvider;
 using Microsoft.AspNetCore.Authentication;
+using AspNetCoreIdentityApp.Web.Requirements;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,7 @@ builder.Services.AddIdentityWithExtension();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings")); // app.dev jsondaki
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpirationRequirementHandler>();
 
 builder.Services.AddAuthorization(opt =>
 {
@@ -32,6 +35,11 @@ builder.Services.AddAuthorization(opt =>
     {
         policy.RequireClaim("City", "Kocaeli"); // Virgülle izin verieln þehirleri arttýrabilirim.
         //policy.RequireRole("Admin"); --> Birden fazla kural eklenebilir.
+    });
+
+    opt.AddPolicy("ExchangePolicy", policy =>
+    {
+        policy.AddRequirements(new ExchangeExpireRequirement()); 
     });
 
 });
