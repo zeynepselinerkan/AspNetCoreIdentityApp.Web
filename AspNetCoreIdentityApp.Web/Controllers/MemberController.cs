@@ -30,8 +30,8 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         {
             //var userClaims = HttpContext.User.Claims; Controllerda olmayan nesne ile ulaşmak istersem. Örneğin Businessta bir classtan erişmeye çalıştığında. Kritik datalar cookiede tutulmaz. Claimler kullanıcı hakkında tuttuğumuz ve yetkilendirmek için kullandığımız datalardır. Key-Value olarak tutulur.
             // Claimleri okuma şekli :
-            var userClaims =User.Claims.ToList(); 
-            var email = User.Claims.FirstOrDefault(x=>x.Type==ClaimTypes.Email);
+            var userClaims = User.Claims.ToList();
+            var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email);
 
             var currentUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
 
@@ -139,7 +139,7 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
                 string randomFileName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(request.Picture.FileName)}"; // .jpg gibi alacak.
 
-                var newPicturePath = Path.Combine(wwwrootFolder!.First(x => x.Name == "userpictures").PhysicalPath,randomFileName);
+                var newPicturePath = Path.Combine(wwwrootFolder!.First(x => x.Name == "userpictures").PhysicalPath, randomFileName);
 
                 using var stream = new FileStream(newPicturePath, FileMode.Create);
 
@@ -158,8 +158,15 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             await _userManager.UpdateSecurityStampAsync(currentUser);
             await _signInManager.SignOutAsync(); // Cookie yeniden oluşsun diye logout yaptırıyoruz.
-            await _signInManager.SignInAsync(currentUser, true);
 
+            if (request.Birthdate.HasValue)
+            {
+                await _signInManager.SignInWithClaimsAsync(currentUser, true, new[] { new Claim("Birthdate", currentUser.Birthdate.Value.ToString()) });
+            }
+            else
+            {
+                await _signInManager.SignInAsync(currentUser, true);
+            }
             TempData["SuccessMessage"] = "Your information was changed successfully.";
 
             var userEditViewModel = new EditUserViewModel()
@@ -186,17 +193,17 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         public IActionResult Claims(string returnUrl)
         {
             //User.Identity.Name == User.Claims.First(x => x.Type == ClaimTypes.Name);
-          
-            var userClaimList =User.Claims.Select(x => new ClaimViewModel()
+
+            var userClaimList = User.Claims.Select(x => new ClaimViewModel()
             {
-                Issuer=x.Issuer,
-                Type=x.Type,
-                Value=x.Value
+                Issuer = x.Issuer,
+                Type = x.Type,
+                Value = x.Value
             }).ToList();
             return View(userClaimList);
         }
 
-        [Authorize(Policy ="KocaeliPolicy")]
+        [Authorize(Policy = "KocaeliPolicy")]
         [HttpGet]
         public IActionResult KocaeliPage()
         {
@@ -206,6 +213,12 @@ namespace AspNetCoreIdentityApp.Web.Controllers
         [Authorize(Policy = "ExchangePolicy")]
         [HttpGet]
         public IActionResult ExchangePage()
+        {
+            return View();
+        }
+        [Authorize(Policy = "ViolencePolicy")]
+        [HttpGet]
+        public IActionResult ViolencePage()
         {
             return View();
         }

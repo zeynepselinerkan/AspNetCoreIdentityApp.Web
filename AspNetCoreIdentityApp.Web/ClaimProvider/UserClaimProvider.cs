@@ -17,7 +17,7 @@ namespace AspNetCoreIdentityApp.Web.ClaimProvider
             _userManager = userManager;
         }
 
-        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
+        public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal) // Her seferinde çalışır her yenilemede.
         {
             var identityUser = principal.Identity as ClaimsIdentity; // Cookiler claimden oluşur. Kullanıcının kimlik bilgisi claimlerden oluşuyor. Claimlerden oluşan bir kimlik.
 

@@ -53,21 +53,35 @@ namespace AspNetCoreIdentityApp.Web.Controllers
                 ModelState.AddModelError(string.Empty, "Email or password is wrong.");
                 return View();
             }
-            var signInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true); //true der isem identity default kitleme metodunu işleme alır.Burası başarılı olursa bize cookie oluşturacak.
 
-            if (signInResult.Succeeded)
-            {
-                return Redirect(returnUrl!);
-            }
+            //var passwordCheck = await _userManager.CheckPasswordAsync(hasUser, request.Password);
+
+            //if(!passwordCheck)
+            //{
+            //    ModelState.AddModelError(string.Empty, "Email or password is wrong.");
+            //    return View();
+
+            //}   
+
+
+            var signInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true); //true der isem identity default kitleme metodunu işleme alır.Burası başarılı olursa bize cookie oluşturacak.
             if (signInResult.IsLockedOut)
             {
                 ModelState.AddModelErrorList(new List<string>() { "You can not sign in by 3 minutes." });
                 return View();
             }
 
-            ModelState.AddModelErrorList(new List<string>() { $"Email or password is wrong.", $" Number Of Failed Access : {await _userManager.GetAccessFailedCountAsync(hasUser)}" });
+            if (!signInResult.Succeeded)
+            {
+                ModelState.AddModelErrorList(new List<string>() { $"Email or password is wrong.", $" Number Of Failed Access : {await _userManager.GetAccessFailedCountAsync(hasUser)}" });
+                return View();
+            }
 
-            return View();
+            if (hasUser.Birthdate.HasValue)
+            {
+                await _signInManager.SignInWithClaimsAsync(hasUser, request.RememberMe, new[] { new Claim("Birthdate", hasUser.Birthdate.Value.ToString()) });
+            }
+            return Redirect(returnUrl!);
         }
         public IActionResult SignUp()
         {
