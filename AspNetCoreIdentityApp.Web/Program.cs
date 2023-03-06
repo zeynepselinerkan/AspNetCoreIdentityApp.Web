@@ -1,4 +1,4 @@
-using AspNetCoreIdentityApp.Web.Models;
+using AspNetCoreIdentityApp.Repository.Models;
 using Microsoft.EntityFrameworkCore;
 using AspNetCoreIdentityApp.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -19,7 +19,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityAppConnectionString"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityAppConnectionString"), options =>
+    {
+        options.MigrationsAssembly("AspNetCoreIdentityApp.Repository");
+    });
 });
 
 builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.FromMinutes(30)); // default 30 dk, otomatik logout için - hassas bilgiler deðiþtiðinde deðiþir. Concurrency stamp ise identity ile ilgili deðil - eþzamanlýlýk için(benden önce deðiþiklik olduysa uyarý gönderme)-her güncellemede deðiþir. Ayný anda olursa bir tanesini kabul eder. Identity otomatik concurrency stamp kontrol ediyor.

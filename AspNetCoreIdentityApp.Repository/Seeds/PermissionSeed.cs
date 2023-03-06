@@ -1,7 +1,6 @@
-﻿using AspNetCoreIdentityApp.Web.Models;
+﻿using AspNetCoreIdentityApp.Repository.Models;
 using AspNetCoreIdentityApp.Core.PermissionRoot;
 using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json.Linq;
 using System.Security;
 using System.Security.Claims;
 
