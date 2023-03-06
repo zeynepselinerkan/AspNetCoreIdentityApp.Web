@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+@inject IAuthorizationService authotizationService
+
+@if (authotizationService.AuthorizeAsync(User, "OrderPermissionPolicy2").Result.Succeeded)
+{
+    <button class="btn btn-primary">Permission.Order.Read</button>
+}
+@if (authotizationService.AuthorizeAsync(User, "OrderPermissionPolicy3").Result.Succeeded)
+{
+    <button class="btn btn-primary">Permission.Order.Delete</button>
+}
+@if (authotizationService.AuthorizeAsync(User, "OrderPermissionPolicy4").Result.Succeeded)
+{
+    <button class="btn btn-primary">Permission.Stock.Delete</button>
+}
+
+
+

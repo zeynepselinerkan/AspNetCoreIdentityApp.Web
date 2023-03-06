@@ -9,6 +9,8 @@ using AspNetCoreIdentityApp.Web.ClaimProvider;
 using Microsoft.AspNetCore.Authentication;
 using AspNetCoreIdentityApp.Web.Requirements;
 using Microsoft.AspNetCore.Authorization;
+using AspNetCoreIdentityApp.Web.Seeds;
+using AspNetCoreIdentityApp.Web.PermissionRoot;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,27 @@ builder.Services.AddAuthorization(opt =>
     {
         policy.AddRequirements(new ViolenceVideoRequirement() { ThresholdAge=18});
     });
+    opt.AddPolicy("OrderPermissionPolicy1", policy =>
+    {
+        policy.RequireClaim("Permission", Permission.Order.Read);
+        policy.RequireClaim("Permission", Permission.Order.Delete);
+        policy.RequireClaim("Permission", Permission.Stock.Delete);
+    });
+    opt.AddPolicy("OrderPermissionPolicy2", policy =>
+    {
+        policy.RequireClaim("Permission", Permission.Order.Read);
+     
+    });
+    opt.AddPolicy("OrderPermissionPolicy3", policy =>
+    {
+     
+        policy.RequireClaim("Permission", Permission.Order.Delete);
+ 
+    });
+    opt.AddPolicy("OrderPermissionPolicy4", policy =>
+    {
+        policy.RequireClaim("Permission", Permission.Stock.Delete);
+    });
 
 });
 
@@ -63,6 +86,13 @@ builder.Services.ConfigureApplicationCookie(opt =>
 });
 
 var app = builder.Build();
+
+using (var scope=app.Services.CreateScope()) // 1 kere çalýþacak.
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+
+    await PermissionSeed.Seed(roleManager);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

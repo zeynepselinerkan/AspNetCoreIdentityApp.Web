@@ -6,7 +6,7 @@ using System.Transactions;
 
 namespace AspNetCoreIdentityApp.Web.ClaimProvider
 {
-    public class UserClaimProvider : IClaimsTransformation
+    public class UserClaimProvider : IClaimsTransformation // Cookilerdeki dataları claim nesnesine dönüştürmeye yarar.
     {
         // Kullanıcı hakkında data olmak zorunda değil. Örneğin apinin istekleri ile ilgili olabilir, abc sitesini yazabilirim.
 

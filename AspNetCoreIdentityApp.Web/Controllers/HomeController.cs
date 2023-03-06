@@ -6,6 +6,7 @@ using System.Diagnostics;
 using AspNetCoreIdentityApp.Web.Extensions;
 using AspNetCoreIdentityApp.Web.Services;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace AspNetCoreIdentityApp.Web.Controllers
 {
@@ -63,6 +64,12 @@ namespace AspNetCoreIdentityApp.Web.Controllers
 
             //}   
 
+
+            // NOT : Çok modüllü bir sistemde çok sayıda claimi cookilere atmamak için 
+            // ----------------------Öneri 2 Yöntem-----------------------------------
+            // 1- HttpContext.SignInAsync(); // Custom claimler oluşturulabilir.medium.com da fatih çakıroğlu custom üyelik yazısı
+            // 2- Permisson tablosu, stock - Permisson Detail tablosu stock create,update gibi..
+            // User.Claims yazınca gelmeli bizim claimimiz.
 
             var signInResult = await _signInManager.PasswordSignInAsync(hasUser, request.Password, request.RememberMe, true); //true der isem identity default kitleme metodunu işleme alır.Burası başarılı olursa bize cookie oluşturacak.
             if (signInResult.IsLockedOut)
