@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using AspNetCoreIdentityApp.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
 using AspNetCoreIdentityApp.Core.OptionsModels;
-using AspNetCoreIdentityApp.Web.Services;
+using AspNetCoreIdentityApp.Service.Services;
 using Microsoft.Extensions.FileProviders;
 using AspNetCoreIdentityApp.Web.ClaimProvider;
 using Microsoft.AspNetCore.Authentication;
@@ -11,7 +11,7 @@ using AspNetCoreIdentityApp.Web.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using AspNetCoreIdentityApp.Web.Seeds;
 using AspNetCoreIdentityApp.Core.PermissionRoot;
-using AspNetCoreIdentityApp.Core.Services;
+using AspNetCoreIdentityApp.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +35,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpirationRequirementHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, ViolenceVideoRequirementHandler>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 
 builder.Services.AddAuthorization(opt =>
 {
