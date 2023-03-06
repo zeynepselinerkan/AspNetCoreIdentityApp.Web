@@ -2,7 +2,7 @@ using AspNetCoreIdentityApp.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using AspNetCoreIdentityApp.Web.Extensions;
 using Microsoft.AspNetCore.Identity;
-using AspNetCoreIdentityApp.Web.OptionsModels;
+using AspNetCoreIdentityApp.Core.OptionsModels;
 using AspNetCoreIdentityApp.Web.Services;
 using Microsoft.Extensions.FileProviders;
 using AspNetCoreIdentityApp.Web.ClaimProvider;
@@ -10,7 +10,8 @@ using Microsoft.AspNetCore.Authentication;
 using AspNetCoreIdentityApp.Web.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using AspNetCoreIdentityApp.Web.Seeds;
-using AspNetCoreIdentityApp.Web.PermissionRoot;
+using AspNetCoreIdentityApp.Core.PermissionRoot;
+using AspNetCoreIdentityApp.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
